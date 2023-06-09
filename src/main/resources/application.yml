@@ -1,0 +1,23 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:33060/flower_fight?useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: 2982
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        show-sql: true
+        format_sql: true
+    show-sql: true
+
+logging:
+  level:
+    org.hibernate.type: trace
