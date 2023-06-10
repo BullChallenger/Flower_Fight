@@ -1,4 +1,4 @@
-package com.example.flower_fight.domain;
+package com.example.flower_fight.domain.constant;
 
 public enum BetType {
     DIE,

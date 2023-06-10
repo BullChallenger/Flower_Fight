@@ -1,6 +1,6 @@
 package com.example.flower_fight.dto;
 
-import com.example.flower_fight.domain.BetType;
+import com.example.flower_fight.domain.constant.BetType;
 import lombok.*;
 
 import java.io.Serializable;

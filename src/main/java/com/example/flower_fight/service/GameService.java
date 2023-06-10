@@ -28,11 +28,12 @@ public class GameService {
 
     public GetResponse create(CreateRequest request) {
         if (gameRepository.findByTitle(request.getTitle()).isPresent()) {
-            throw   new BaseException(ResultType.SYSTEM_ERROR);
+            throw new BaseException(ResultType.SYSTEM_ERROR);
         }
         Game theGame = modelMapper.map(request, Game.class);
         Player thePlayer = Player.builder()
                 .accountId(1L)
+                .email("test@test.com")
                 .build();
 
         House theHouse = houseRepository.findById(request.getHouseId()).orElseThrow(() -> {
@@ -40,7 +41,7 @@ public class GameService {
         });
 
         theGame.setHouse(theHouse);
-        theGame.getPlayerIdList().add(thePlayer.getAccountId());
+        theGame.getPlayerEmailList().add(thePlayer.getEmail());
         theGame.setDefaultBet(request.getDefaultBet());
 
         Game savedGame = gameRepository.save(theGame);
@@ -81,6 +82,7 @@ public class GameService {
         // TODO: Spring Security 를 통해 입장한 플레이어의 정보 가져오기
         Player thePlayer = Player.builder()
                 .accountId(1L)
+                .email("test@test.com")
                 .name("TEST")
                 .build();
         Asset theAsset = assetRepository.findByAccountId(thePlayer.getAccountId()).orElseThrow(() -> {
@@ -88,8 +90,8 @@ public class GameService {
         });
 
         thePlayer.setAsset(theAsset.getAsset());
-        theGame.getPlayerIdList().add(1L);
-        List<Player> thePlayers = theGame.getPlayerIdList().stream().map(accountCacheService::loadAccountByAccountId)
+        theGame.getPlayerEmailList().add("test@test.com");
+        List<Player> thePlayers = theGame.getPlayerEmailList().stream().map(accountCacheService::loadAccountByEmail)
                 .map(account -> modelMapper.map(account, Player.class)).collect(Collectors.toList());
 
         gameRepository.save(theGame);
@@ -117,7 +119,7 @@ public class GameService {
         assetRepository.save(theAsset);
 
         // TODO: Spring Security 를 통해 입장한 플레이어의 정보 가져오기
-        theGame.getPlayerIdList().remove(thePlayer);
+        theGame.getPlayerEmailList().remove(thePlayer.getEmail());
         Game savedGame = gameRepository.save(theGame);
 
         // TODO: Spring Security 로 Player 객체 전달하기

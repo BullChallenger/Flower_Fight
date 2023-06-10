@@ -1,6 +1,7 @@
 package com.example.flower_fight.service;
 
 import com.example.flower_fight.domain.Account;
+import com.example.flower_fight.dto.AccountDTO.*;
 import com.example.flower_fight.exception.BaseException;
 import com.example.flower_fight.exception.ResultType;
 import com.example.flower_fight.repository.AccountCacheRepository;
@@ -18,10 +19,9 @@ public class AccountCacheService {
 
     private final ModelMapper modelMapper;
 
-    public Account loadAccountByAccountId(Long accountId) {
-        return accountCacheRepository.getAccount(accountId).map(accountCacheDTO ->
-                modelMapper.map(accountCacheDTO, Account.class)).orElseGet(() ->
-                accountRepository.findById(accountId).orElseThrow(() ->
+    public AccountCacheDTO loadAccountByEmail(String email) {
+        return accountCacheRepository.getAccount(email).orElseGet(() ->
+                accountRepository.findByEmail(email).map(account -> modelMapper.map(account, AccountCacheDTO.class)).orElseThrow(() ->
                         new BaseException(ResultType.SYSTEM_ERROR)
                 )
         );

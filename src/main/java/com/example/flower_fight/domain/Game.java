@@ -1,7 +1,9 @@
 package com.example.flower_fight.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.persistence.Entity;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +33,7 @@ public class Game extends BaseEntity {
 
     @Column
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<Long> playerIdList = new ArrayList<>();
+    private List<String> playerEmailList = new ArrayList<>();
 
     @Comment(value = "매 라운드 당 지불해야하는 베팅금")
     @Column(columnDefinition = "DECIMAL(15, 2)")
@@ -47,9 +49,9 @@ public class Game extends BaseEntity {
     private House house;
 
     @Builder
-    public Game(Long gameId, List<Long> playerIdList, BigDecimal defaultBet, BigDecimal totalBetInGame) {
+    public Game(Long gameId, List<String> playerEmailList, BigDecimal defaultBet, BigDecimal totalBetInGame) {
         this.gameId = gameId;
-        this.playerIdList = playerIdList;
+        this.playerEmailList = playerEmailList;
         this.defaultBet = defaultBet;
         this.totalBetInGame = totalBetInGame;
     }

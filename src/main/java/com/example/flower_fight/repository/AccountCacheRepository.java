@@ -18,24 +18,25 @@ public class AccountCacheRepository {
 
     private final RedisTemplate<String, AccountCacheDTO> accountRedisTemplate;
     private final ModelMapper modelMapper;
+
     public void setAccount(Account account) {
-        Long accountId = account.getAccountId();
+        String email = account.getEmail();
         AccountCacheDTO theAccount = modelMapper.map(account, AccountCacheDTO.class);
 
-        String key = getKey(accountId);
-        if (getAccount(accountId).isPresent()) {
+        String key = getKey(email);
+        if (getAccount(email).isPresent()) {
             accountRedisTemplate.delete(key);
         }
         log.info("Set Account to Redis {}: {}", key, account);
         accountRedisTemplate.opsForValue().set(key, theAccount, AccountCacheKey.ACCOUNT_CACHE_TTL);
     }
 
-    public Optional<AccountCacheDTO> getAccount(Long accountId) {
-        String key = getKey(accountId);
+    public Optional<AccountCacheDTO> getAccount(String email) {
+        String key = getKey(email);
         AccountCacheDTO theAccount = accountRedisTemplate.opsForValue().get(key);
         log.info("Get data from Redis {}: {}", key, theAccount);
         return Optional.ofNullable(theAccount);
     }
 
-    private String getKey(Long accountId) { return "ACCOUNT: " + String.valueOf(accountId); }
+    private String getKey(String email) { return "ACCOUNT: " + email; }
 }

@@ -34,7 +34,7 @@ public class GameDTO implements Serializable {
 
         private String title;
 
-        private List<Long> playerIdList;
+        private List<String> playerEmailList;
 
         private BigDecimal defaultBet;
     }
@@ -77,7 +77,7 @@ public class GameDTO implements Serializable {
 
         private BigDecimal defaultBet;
 
-        private List<Long> playerIdList;
+        private List<String> playerEmailList;
     }
 
     @Getter

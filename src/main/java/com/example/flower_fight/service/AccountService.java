@@ -8,14 +8,14 @@ import com.example.flower_fight.exception.ResultType;
 import com.example.flower_fight.repository.AccountCacheRepository;
 import com.example.flower_fight.repository.AccountRepository;
 import com.example.flower_fight.repository.AssetRepository;
-import com.example.flower_fight.utils.AccountCacheKey;
-import jakarta.transaction.Transactional;
+import com.example.flower_fight.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @Transactional
@@ -29,6 +29,12 @@ public class AccountService {
     private final AccountCacheRepository accountCacheRepository;
     private final AccountCacheService accountCacheService;
 
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.token.expired-time-ms}")
+    private Long expiredTime;
+
     public CreateResponse create(CreateRequest request) {
         Account theAccount = accountRepository.save(modelMapper.map(request, Account.class));
         Asset theAsset = Asset.builder()
@@ -40,7 +46,7 @@ public class AccountService {
         return modelMapper.map(theAccount, CreateResponse.class);
     }
 
-    public GetResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         Account theAccount = accountRepository.findByEmail(request.getEmail()).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
@@ -48,16 +54,20 @@ public class AccountService {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         }
         accountCacheRepository.setAccount(theAccount);
+        String token = JwtUtils.generateToke(theAccount.getEmail(), theAccount.getNickName(), secretKey, expiredTime);
+        LoginResponse response = modelMapper.map(theAccount, LoginResponse.class);
+        response.setToken(token);
+
+        return response;
+    }
+
+    public GetResponse read(Long accountId, Authentication authentication) {
+        Account theAccount = modelMapper.map(authentication.getPrincipal(), Account.class);
         return modelMapper.map(theAccount, GetResponse.class);
     }
 
-    public GetResponse read(Long accountId) {
-        Account theAccount = accountCacheService.loadAccountByAccountId(accountId);
-        return modelMapper.map(theAccount, GetResponse.class);
-    }
-
-    public GetResponse update(UpdateRequest request) {
-        Account theAccount = accountCacheService.loadAccountByAccountId(request.getAccountId());
+    public GetResponse update(UpdateRequest request, Authentication authentication) {
+        Account theAccount = modelMapper.map(authentication.getPrincipal(), Account.class);
 
         theAccount.setEmail(request.getEmail());
         theAccount.setNickName(request.getNickName());
@@ -70,8 +80,8 @@ public class AccountService {
         return modelMapper.map(accountRepository.save(theAccount), GetResponse.class);
     }
 
-    public void delete(DeleteRequest request) {
-        Account theAccount = accountCacheService.loadAccountByAccountId(request.getAccountId());
+    public void delete(DeleteRequest request, Authentication authentication) {
+        Account theAccount = modelMapper.map(authentication.getPrincipal(), Account.class);
 
         theAccount.setIsDeleted(true);
         accountCacheRepository.setAccount(theAccount);

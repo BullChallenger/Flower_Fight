@@ -5,7 +5,7 @@ import com.example.flower_fight.dto.HouseDTO.*;
 import com.example.flower_fight.exception.BaseException;
 import com.example.flower_fight.exception.ResultType;
 import com.example.flower_fight.repository.HouseRepository;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

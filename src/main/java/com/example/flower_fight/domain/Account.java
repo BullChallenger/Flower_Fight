@@ -1,9 +1,12 @@
 package com.example.flower_fight.domain;
 
-import jakarta.persistence.*;
-import jakarta.persistence.Table;
+import com.example.flower_fight.domain.constant.AccountRole;
 import lombok.*;
 import org.hibernate.annotations.*;
+
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @ToString
 @Entity
@@ -43,6 +46,10 @@ public class Account extends BaseEntity {
 
     @Column
     private boolean isPlayingGame = false;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private AccountRole role = AccountRole.USER;
 
     @Builder
     public Account(Long accountId, String email, String nickName, String password, String name, int age) {

@@ -2,6 +2,9 @@ server:
   port: 8088
 
 spring:
+  profiles:
+    include: jwt
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:33060/flower_fight?useUnicode=true&serverTimezone=Asia/Seoul
