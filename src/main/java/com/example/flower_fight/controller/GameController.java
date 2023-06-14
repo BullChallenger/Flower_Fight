@@ -7,6 +7,7 @@ import com.example.flower_fight.dto.GameDTO.*;
 import com.example.flower_fight.dto.ResponseDTO;
 import com.example.flower_fight.service.GameService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class GameController extends AbstractController {
     private final GameService gameService;
 
     @PostMapping(value = "/create")
-    public ResponseDTO<GetResponse> create(@RequestBody CreateRequest request) {
-        return ok(gameService.create(request));
+    public ResponseDTO<GetResponse> create(@RequestBody CreateRequest request, Authentication authentication) {
+        return ok(gameService.create(request, authentication));
     }
 
     @GetMapping(value = "/{gameId}/read")
@@ -40,8 +41,13 @@ public class GameController extends AbstractController {
     }
 
     @PostMapping(value = "/{gameId}/enter")
-    public ResponseDTO<EnterResponse> enter(@PathVariable(value = "gameId") Long gameId) {
-        return ok(gameService.enter(gameId));
+    public ResponseDTO<EnterResponse> enter(@PathVariable(value = "gameId") Long gameId, Authentication authentication) {
+        return ok(gameService.enter(gameId, authentication));
+    }
+
+    @PostMapping(value = "/{gameId}/exit")
+    public ResponseDTO<ExitResponse> exit(@PathVariable(value = "gameId") Long gameId, Authentication authentication) {
+        return ok(gameService.exit(gameId, authentication));
     }
 
     @GetMapping(value = "/start")

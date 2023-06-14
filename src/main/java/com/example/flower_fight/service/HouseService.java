@@ -1,6 +1,7 @@
 package com.example.flower_fight.service;
 
 import com.example.flower_fight.domain.House;
+import com.example.flower_fight.dto.AccountDTO.AccountCacheDTO;
 import com.example.flower_fight.dto.HouseDTO.*;
 import com.example.flower_fight.exception.BaseException;
 import com.example.flower_fight.exception.ResultType;
@@ -8,6 +9,7 @@ import com.example.flower_fight.repository.HouseRepository;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,10 +55,17 @@ public class HouseService {
         houseRepository.save(theHouse);
     }
 
-    public EnterResponse enter(Long houseId) {
+    public EnterResponse enter(Long houseId, Authentication authentication) {
         House theHouse = houseRepository.findById(houseId).orElseThrow(() ->
                 new BaseException(ResultType.SYSTEM_ERROR)
         );
+        AccountCacheDTO theAccount = modelMapper.map(authentication.getPrincipal(), AccountCacheDTO.class);
+
+        if (theHouse.getPlayerEmailList().contains(theAccount.getEmail())) {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        }
+        theHouse.getPlayerEmailList().add(theAccount.getEmail());
+
         // TODO: Spring Security 써서 Validation 하기
         return modelMapper.map(theHouse, EnterResponse.class);
     }

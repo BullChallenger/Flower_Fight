@@ -9,6 +9,7 @@ import com.example.flower_fight.repository.GameRepository;
 import com.example.flower_fight.repository.HouseRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,15 +27,12 @@ public class GameService {
 
     private final AccountCacheService accountCacheService;
 
-    public GetResponse create(CreateRequest request) {
+    public GetResponse create(CreateRequest request, Authentication authentication) {
         if (gameRepository.findByTitle(request.getTitle()).isPresent()) {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         }
         Game theGame = modelMapper.map(request, Game.class);
-        Player thePlayer = Player.builder()
-                .accountId(1L)
-                .email("test@test.com")
-                .build();
+        Player thePlayer = modelMapper.map(authentication.getPrincipal(), Player.class);
 
         House theHouse = houseRepository.findById(request.getHouseId()).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
@@ -74,56 +72,58 @@ public class GameService {
         gameRepository.save(theGame);
     }
 
-    public EnterResponse enter(Long gameId) {
+    public EnterResponse enter(Long gameId, Authentication authentication) {
         Game theGame = gameRepository.findById(gameId).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
 
-        // TODO: Spring Security 를 통해 입장한 플레이어의 정보 가져오기
-        Player thePlayer = Player.builder()
-                .accountId(1L)
-                .email("test@test.com")
-                .name("TEST")
-                .build();
+        Player thePlayer = modelMapper.map(authentication.getPrincipal(), Player.class);
+        if (theGame.getPlayerEmailList().contains(thePlayer.getEmail())) {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        }
+
         Asset theAsset = assetRepository.findByAccountId(thePlayer.getAccountId()).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
 
         thePlayer.setAsset(theAsset.getAsset());
-        theGame.getPlayerEmailList().add("test@test.com");
+        theGame.getPlayerEmailList().add(thePlayer.getEmail());
         List<Player> thePlayers = theGame.getPlayerEmailList().stream().map(accountCacheService::loadAccountByEmail)
                 .map(account -> modelMapper.map(account, Player.class)).collect(Collectors.toList());
 
         gameRepository.save(theGame);
 
-        // TODO: Spring Security 로 Player 객체 전달하기
         return EnterResponse.builder()
                 .thePlayers(thePlayers)
                 .build();
     }
 
-    // TODO: PlayerDTO 를 Request 로 받아서 Asset 적용시키기
-    public EnterResponse exit() {
-        // TODO: Spring Security 를 통해 입장한 플레이어 객체 생성
-        Player thePlayer = Player.builder().build();
+    public ExitResponse exit(Long gameId, Authentication authentication) {
+        Player thePlayer = modelMapper.map(authentication.getPrincipal(), Player.class);
+        System.out.println(thePlayer);
 
-        // TODO: Spring Security 를 통해 입장한 플레이어의 정보 가져와서 소속된 게임 ID 값 받기
-        Game theGame = gameRepository.findById(thePlayer.getGameId()).orElseThrow(() -> {
+        Game theGame = gameRepository.findById(gameId).orElseThrow(() -> {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        });
+
+        House theHouse = houseRepository.findById(theGame.getHouse().getHouseId()).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
 
         Asset theAsset = assetRepository.findByAccountId(thePlayer.getAccountId()).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
+
         theAsset.setAsset(thePlayer.getAsset());
         assetRepository.save(theAsset);
 
-        // TODO: Spring Security 를 통해 입장한 플레이어의 정보 가져오기
         theGame.getPlayerEmailList().remove(thePlayer.getEmail());
-        Game savedGame = gameRepository.save(theGame);
+        gameRepository.save(theGame);
 
-        // TODO: Spring Security 로 Player 객체 전달하기
-        return modelMapper.map(thePlayer, EnterResponse.class);
+        return ExitResponse.builder()
+                .thePlayer(thePlayer)
+                .theGames(theHouse.getGameList())
+                .build();
     }
 
     public Response process(int roundCount, Request request) {

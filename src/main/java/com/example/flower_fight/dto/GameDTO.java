@@ -1,6 +1,7 @@
 package com.example.flower_fight.dto;
 
 import com.example.flower_fight.domain.Card;
+import com.example.flower_fight.domain.Game;
 import com.example.flower_fight.domain.Player;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -87,5 +88,15 @@ public class GameDTO implements Serializable {
     @AllArgsConstructor
     public static class EnterResponse {
         private List<Player> thePlayers;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ExitResponse {
+        private Player thePlayer;
+        private List<Game> theGames;
     }
 }

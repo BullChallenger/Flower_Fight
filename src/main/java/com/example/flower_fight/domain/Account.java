@@ -44,9 +44,6 @@ public class Account extends BaseEntity {
     @Column(nullable = false)
     private int age;
 
-    @Column
-    private boolean isPlayingGame = false;
-
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private AccountRole role = AccountRole.USER;

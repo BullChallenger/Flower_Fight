@@ -40,6 +40,9 @@ public class House extends BaseEntity {
     @Column
     private int maxLimitPlayer;
 
+    @ElementCollection
+    private List<String> playerEmailList = new ArrayList<>();
+
     @OneToMany(mappedBy = "house", cascade = CascadeType.REMOVE)
     private List<Game> gameList = new ArrayList<>();
 

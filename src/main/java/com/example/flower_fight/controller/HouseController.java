@@ -4,6 +4,7 @@ import com.example.flower_fight.dto.HouseDTO.*;
 import com.example.flower_fight.dto.ResponseDTO;
 import com.example.flower_fight.service.HouseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.flower_fight.dto.ResponseDTO.ok;
@@ -37,7 +38,7 @@ public class HouseController {
     }
 
     @PostMapping(value = "/{houseId}/enter")
-    public ResponseDTO<EnterResponse> enter(@PathVariable(value = "houseId") Long houseId) {
-        return ok(houseService.enter(houseId));
+    public ResponseDTO<EnterResponse> enter(@PathVariable(value = "houseId") Long houseId, Authentication authentication) {
+        return ok(houseService.enter(houseId, authentication));
     }
 }
