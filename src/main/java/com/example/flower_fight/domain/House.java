@@ -36,10 +36,6 @@ public class House extends BaseEntity {
     @Column(columnDefinition = "DECIMAL(15, 2)")
     private BigDecimal minLimitAsset;
 
-    @Comment(value = "최대 입장 가능 인원")
-    @Column
-    private int maxLimitPlayer;
-
     @ElementCollection
     private List<String> playerEmailList = new ArrayList<>();
 
@@ -47,10 +43,9 @@ public class House extends BaseEntity {
     private List<Game> gameList = new ArrayList<>();
 
     @Builder
-    public House(Long houseId, String title, BigDecimal minLimitAsset, int maxLimitPlayer) {
+    public House(Long houseId, String title, BigDecimal minLimitAsset) {
         this.houseId = houseId;
         this.title = title;
         this.minLimitAsset = minLimitAsset;
-        this.maxLimitPlayer = maxLimitPlayer;
     }
 }

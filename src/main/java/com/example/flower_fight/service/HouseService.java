@@ -39,7 +39,6 @@ public class HouseService {
         );
         theHouse.setTitle(request.getTitle());
         theHouse.setMinLimitAsset(request.getMinLimitAsset());
-        theHouse.setMaxLimitPlayer(request.getMaxLimitPlayer());
 
         return modelMapper.map(houseRepository.save(theHouse), Response.class);
     }
@@ -60,6 +59,10 @@ public class HouseService {
                 new BaseException(ResultType.SYSTEM_ERROR)
         );
         AccountCacheDTO theAccount = modelMapper.map(authentication.getPrincipal(), AccountCacheDTO.class);
+
+        if (theHouse.getMinLimitAsset().compareTo(theAccount.getAsset()) == 1) {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        }
 
         if (theHouse.getPlayerEmailList().contains(theAccount.getEmail())) {
             throw new BaseException(ResultType.SYSTEM_ERROR);

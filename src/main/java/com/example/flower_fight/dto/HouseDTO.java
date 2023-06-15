@@ -22,13 +22,10 @@ public class HouseDTO {
 
         private BigDecimal minLimitAsset;
 
-        private int maxLimitPlayer;
-
         @Builder
-        public Request(String title, BigDecimal minLimitAsset, int maxLimitPlayer) {
+        public Request(String title, BigDecimal minLimitAsset) {
             this.title = title;
             this.minLimitAsset = minLimitAsset;
-            this.maxLimitPlayer = maxLimitPlayer;
         }
     }
 
@@ -43,14 +40,11 @@ public class HouseDTO {
 
         private BigDecimal minLimitAsset;
 
-        private int maxLimitPlayer;
-
         @Builder
-        public UpdateRequest(Long houseId, String title, BigDecimal minLimitAsset, int maxLimitPlayer) {
+        public UpdateRequest(Long houseId, String title, BigDecimal minLimitAsset) {
             this.houseId = houseId;
             this.title = title;
             this.minLimitAsset = minLimitAsset;
-            this.maxLimitPlayer = maxLimitPlayer;
         }
     }
 
@@ -65,14 +59,11 @@ public class HouseDTO {
 
         private BigDecimal minLimitAsset;
 
-        private int maxLimitPlayer;
-
         @Builder
-        public Response(Long houseId, String title, BigDecimal minLimitAsset, int maxLimitPlayer) {
+        public Response(Long houseId, String title, BigDecimal minLimitAsset) {
             this.houseId = houseId;
             this.title = title;
             this.minLimitAsset = minLimitAsset;
-            this.maxLimitPlayer = maxLimitPlayer;
         }
     }
 

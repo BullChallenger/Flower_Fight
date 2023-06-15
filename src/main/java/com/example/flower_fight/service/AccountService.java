@@ -56,6 +56,8 @@ public class AccountService {
         accountCacheRepository.setAccount(theAccount);
         String token = JwtUtils.generateToke(theAccount.getEmail(), theAccount.getNickName(), secretKey, expiredTime);
         LoginResponse response = modelMapper.map(theAccount, LoginResponse.class);
+
+        response.setAsset(accountCacheRepository.getAccount(request.getEmail()).get().getAsset());
         response.setToken(token);
 
         return response;

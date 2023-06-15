@@ -35,6 +35,8 @@ public class GameDTO implements Serializable {
 
         private String title;
 
+        private int maxLimitPlayer;
+
         private List<String> playerEmailList;
 
         private BigDecimal defaultBet;
@@ -50,6 +52,8 @@ public class GameDTO implements Serializable {
         private Long houseId;
 
         private String title;
+
+        private int maxLimitPlayer;
 
         private BigDecimal defaultBet;
     }
@@ -76,6 +80,8 @@ public class GameDTO implements Serializable {
 
         private String title;
 
+        private int maxLimitPlayer;
+
         private BigDecimal defaultBet;
 
         private List<String> playerEmailList;
@@ -87,6 +93,8 @@ public class GameDTO implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class EnterResponse {
+        private Game theGame;
+
         private List<Player> thePlayers;
     }
 

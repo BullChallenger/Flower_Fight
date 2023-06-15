@@ -31,6 +31,10 @@ public class Game extends BaseEntity {
     @Column
     private String title;
 
+    @Comment(value = "최대 입장 가능 인원")
+    @Column
+    private int maxLimitPlayer;
+
     @Column
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> playerEmailList = new ArrayList<>();
@@ -49,8 +53,9 @@ public class Game extends BaseEntity {
     private House house;
 
     @Builder
-    public Game(Long gameId, List<String> playerEmailList, BigDecimal defaultBet, BigDecimal totalBetInGame) {
+    public Game(Long gameId, int maxLimitPlayer, List<String> playerEmailList, BigDecimal defaultBet, BigDecimal totalBetInGame) {
         this.gameId = gameId;
+        this.maxLimitPlayer = maxLimitPlayer;
         this.playerEmailList = playerEmailList;
         this.defaultBet = defaultBet;
         this.totalBetInGame = totalBetInGame;

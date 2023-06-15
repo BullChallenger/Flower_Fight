@@ -41,6 +41,7 @@ public class GameService {
         theGame.setHouse(theHouse);
         theGame.getPlayerEmailList().add(thePlayer.getEmail());
         theGame.setDefaultBet(request.getDefaultBet());
+        theGame.setMaxLimitPlayer(request.getMaxLimitPlayer());
 
         Game savedGame = gameRepository.save(theGame);
 
@@ -60,6 +61,7 @@ public class GameService {
         });
         theGame.setTitle(request.getTitle());
         theGame.setDefaultBet(request.getDefaultBet());
+        theGame.setMaxLimitPlayer(request.getMaxLimitPlayer());
 
         return modelMapper.map(gameRepository.save(theGame), GetResponse.class);
     }
@@ -76,6 +78,10 @@ public class GameService {
         Game theGame = gameRepository.findById(gameId).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
+
+        if (theGame.getMaxLimitPlayer() == theGame.getPlayerEmailList().size()) {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        }
 
         Player thePlayer = modelMapper.map(authentication.getPrincipal(), Player.class);
         if (theGame.getPlayerEmailList().contains(thePlayer.getEmail())) {
@@ -94,6 +100,7 @@ public class GameService {
         gameRepository.save(theGame);
 
         return EnterResponse.builder()
+                .theGame(theGame)
                 .thePlayers(thePlayers)
                 .build();
     }

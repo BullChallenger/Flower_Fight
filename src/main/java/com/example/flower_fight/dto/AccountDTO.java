@@ -243,15 +243,6 @@ public class AccountDTO implements Serializable {
 
         private String token;
 
-        @Builder
-        public LoginResponse(Long accountId, String email, String nickName, String password, String name, int age, String token) {
-            this.accountId = accountId;
-            this.email = email;
-            this.nickName = nickName;
-            this.password = password;
-            this.name = name;
-            this.age = age;
-            this.token = token;
-        }
+        private BigDecimal asset;
     }
 }
